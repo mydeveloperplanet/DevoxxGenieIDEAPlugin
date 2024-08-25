@@ -34,17 +34,17 @@ public class ChatMessageContextUtil {
                                                             String projectContext,
                                                             boolean isProjectContextAdded,
                                                             int totalFileCount) {
-
         ChatMessageContext context = ChatMessageContext.builder()
-            .project(project)
-            .name(String.valueOf(System.currentTimeMillis()))
-            .userPrompt(userPromptText)
-            .userMessage(UserMessage.userMessage(userPromptText))
-            .languageModel(languageModel)
-            .webSearchRequested(actionCommand.equals(Constant.TAVILY_SEARCH_ACTION) ||
-                                actionCommand.equals(Constant.GOOGLE_SEARCH_ACTION))
-            .totalFileCount(totalFileCount)
-            .build();
+                .project(project)
+                .name(String.valueOf(System.currentTimeMillis()))
+                .userPrompt(userPromptText)
+                .userMessage(UserMessage.userMessage(userPromptText))
+                .languageModel(languageModel)
+                .actionCommand(actionCommand)  // Set the action command
+                .webSearchRequested(actionCommand.equals(Constant.TAVILY_SEARCH_ACTION) ||
+                        actionCommand.equals(Constant.GOOGLE_SEARCH_ACTION))
+                .totalFileCount(totalFileCount)
+                .build();
 
         boolean isStreamMode = stateService.getStreamMode() && actionCommand.equals(Constant.SUBMIT_ACTION);
         if (isStreamMode) {

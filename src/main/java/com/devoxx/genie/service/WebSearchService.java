@@ -33,16 +33,27 @@ public class WebSearchService {
         String search(String query);
     }
 
-    /**
-     * Search the web for the given query.
-     * @param chatMessageContext the chat message context
-     * @return the AI message
-     */
     public @NotNull Optional<AiMessage> searchWeb(@NotNull ChatMessageContext chatMessageContext) {
         WebSearchEngine engine = createWebSearchEngine(chatMessageContext.getContext());
         return Optional.ofNullable(engine)
-            .flatMap(webSearchEngine -> executeSearchCommand(webSearchEngine, chatMessageContext));
+                .flatMap(webSearchEngine -> executeSearchCommand(webSearchEngine, chatMessageContext));
     }
+    private @Nullable WebSearchEngine createWebSearchEngine(@NotNull String searchType) {
+        DevoxxGenieSettingsService settings = DevoxxGenieSettingsServiceProvider.getInstance();
+        if (searchType.equals(TAVILY_SEARCH_ACTION) && settings.getTavilySearchKey() != null) {
+            return TavilyWebSearchEngine.builder()
+                    .apiKey(settings.getTavilySearchKey())
+                    .build();
+        } else if (searchType.equals(GOOGLE_SEARCH_ACTION) &&             settings.getGoogleSearchKey() != null &&
+                settings.getGoogleCSIKey() != null) {
+            return GoogleCustomWebSearchEngine.builder()
+                    .apiKey(settings.getGoogleSearchKey())
+                    .csi(settings.getGoogleCSIKey())
+                    .build();
+        }
+        return null;
+    }
+
 
     /**
      * Execute the search command.
@@ -65,26 +76,5 @@ public class WebSearchService {
         return Optional.of(new AiMessage(website.search(chatMessageContext.getUserPrompt())));
     }
 
-    /**
-     * Get the web search engine.
-     * @param searchType the search type
-     * @return the web search engine
-     */
-    private @Nullable WebSearchEngine createWebSearchEngine(@NotNull String searchType) {
-        DevoxxGenieSettingsService settings = DevoxxGenieSettingsServiceProvider.getInstance();
 
-        if (searchType.equals(TAVILY_SEARCH_ACTION) && settings.getTavilySearchKey() != null) {
-            return TavilyWebSearchEngine.builder()
-                .apiKey(settings.getTavilySearchKey())
-                .build();
-        } else if (searchType.equals(GOOGLE_SEARCH_ACTION) &&
-            settings.getGoogleSearchKey() != null &&
-            settings.getGoogleCSIKey() != null) {
-            return GoogleCustomWebSearchEngine.builder()
-                .apiKey(settings.getGoogleSearchKey())
-                .csi(settings.getGoogleCSIKey())
-                .build();
-        }
-        return null;
-    }
 }

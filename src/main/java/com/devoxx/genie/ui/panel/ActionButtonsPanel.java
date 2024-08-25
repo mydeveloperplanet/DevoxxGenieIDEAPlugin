@@ -298,17 +298,18 @@ public class ActionButtonsPanel extends JPanel implements SettingsChangeListener
         }
 
         currentChatMessageContext = ChatMessageContextUtil.createContext(
-            project,
-            userPromptText,
-            selectedLanguageModel,
-            chatModelProvider,
-            stateService,
-            actionEvent.getActionCommand(),
-            editorFileButtonManager,
-            projectContext,
-            isProjectContextAdded,
-            FileListManager.getInstance().getTotalFileCount()
+                project,
+                userPromptText,
+                selectedLanguageModel,
+                chatModelProvider,
+                stateService,
+                actionEvent.getActionCommand(),  // Pass the action command
+                editorFileButtonManager,
+                projectContext,
+                isProjectContextAdded,
+                FileListManager.getInstance().getTotalFileCount()
         );
+
 
         return true;
     }

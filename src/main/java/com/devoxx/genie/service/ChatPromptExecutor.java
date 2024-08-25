@@ -70,15 +70,19 @@ public class ChatPromptExecutor {
     public Optional<String> updatePromptWithCommandIfPresent(@NotNull ChatMessageContext chatMessageContext,
                                                              PromptOutputPanel promptOutputPanel) {
         Optional<String> commandFromPrompt = getCommandFromPrompt(chatMessageContext.getUserPrompt().trim(), promptOutputPanel);
-        chatMessageContext.setUserPrompt(commandFromPrompt.orElse(chatMessageContext.getUserPrompt()));
 
+        chatMessageContext.setUserPrompt(commandFromPrompt.orElse(chatMessageContext.getUserPrompt()));
+        // Set the correct search type based on the action command
+        if (chatMessageContext.isWebSearchRequested()) {
+            chatMessageContext.setContext(chatMessageContext.getActionCommand());
+        }
         // Ensure that EditorInfo is set in the ChatMessageContext
         if (chatMessageContext.getEditorInfo() == null) {
             chatMessageContext.setEditorInfo(getEditorInfo(chatMessageContext.getProject()));
         }
-
         return commandFromPrompt;
     }
+
 
     private @NotNull EditorInfo getEditorInfo(Project project) {
         EditorInfo editorInfo = new EditorInfo();
